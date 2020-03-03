@@ -18,6 +18,7 @@ public class RabbitMqEventHandler {
 //        try {
             System.out.println("Event Received: " + event);
             throw new AmqpRejectAndDontRequeueException("Exception throwing test started...");
+//            throw new Exception("Exception throwing test started...");
 //        }catch (Exception e){
 //            log.error("Error at Employee handle: " + e);
 //        }
@@ -28,6 +29,7 @@ public class RabbitMqEventHandler {
 //        try {
             System.out.println("Event Received: " + event);
             throw new AmqpRejectAndDontRequeueException ("Exception throwing test started...");
+//            throw new Exception("Exception throwing test started...");
 //        }catch (Exception e){
 //            log.error("Error at Vehicle handle: " + e);
 //        }

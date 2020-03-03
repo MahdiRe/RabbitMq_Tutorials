@@ -1,9 +1,6 @@
 package com.rabbitmq.multipleQueue.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -12,11 +9,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 public class RabbitMQConfiguration {
 
     @Value("${rabbitmq.common.exchange}")
     String commonExchange;
+
+    @Value("${rabbitmq.deadLetter.exchange}")
+    String deadLetterExchange;
 
     @Value("${rabbitmq.employee.queue}")
     String employeeQueue;
@@ -24,26 +27,55 @@ public class RabbitMQConfiguration {
     @Value("${rabbitmq.vehicle.queue}")
     String vehicleQueue;
 
+    @Value("${rabbitmq.deadLetter.queue}")
+    String deadLetterQueue;
+
     @Value("${rabbitmq.employee.routingkey}")
     private String employeeRK;
 
     @Value("${rabbitmq.vehicle.routingkey}")
     private String vehicleRK;
 
+    @Value("${rabbitmq.deadLetter.routingkey}")
+    private String deadLetterRK;
+
+
+    @Bean
+    Queue dlq() {
+        return QueueBuilder.durable(deadLetterQueue).build();
+    }
 
     @Bean
     Queue employeeQueue() {
-        return new Queue(employeeQueue, false);
+//        return new Queue(employeeQueue, false);
+        return QueueBuilder.nonDurable(employeeQueue).withArgument("x-dead-letter-exchange", deadLetterExchange)
+                .withArgument("x-dead-letter-routing-key", deadLetterRK).build();
     }
 
     @Bean
     Queue vehicleQueue() {
-        return new Queue(vehicleQueue, false);
+//        Map<String, Object> args = new HashMap<>();
+//        args.put("x-dead-letter-exchange", deadLetterExchange);
+//        args.put("x-dead-letter-routing-key", deadLetterRK);
+//        return new Queue(vehicleQueue, false, false, false, args);
+
+        return QueueBuilder.nonDurable(vehicleQueue).withArgument("x-dead-letter-exchange", deadLetterExchange)
+                .withArgument("x-dead-letter-routing-key", deadLetterRK).build();
+    }
+
+    @Bean  // done
+    DirectExchange exchange() {
+        return new DirectExchange(commonExchange);
+    }
+
+    @Bean // done
+    DirectExchange deadLetterExchange() {
+        return new DirectExchange(deadLetterExchange);
     }
 
     @Bean
-    DirectExchange exchange() {
-        return new DirectExchange(commonExchange);
+    Binding DLQbinding() {
+        return BindingBuilder.bind(dlq()).to(deadLetterExchange()).with(deadLetterRK);
     }
 
     @Bean
