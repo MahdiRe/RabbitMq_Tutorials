@@ -21,4 +21,8 @@ public class Employee {
         this.employeeName = employeeName;
     }
 
+    @Override
+    public String toString() {
+        return "[ Employee Id: " + this.employeeId + " ," + " Employee Name: " + this.employeeName + " ]";
+    }
 }

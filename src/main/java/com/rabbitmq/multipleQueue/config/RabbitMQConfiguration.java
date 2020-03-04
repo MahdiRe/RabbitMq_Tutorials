@@ -48,8 +48,9 @@ public class RabbitMQConfiguration {
     @Bean
     Queue employeeQueue() {
 //        return new Queue(employeeQueue, false);
-        return QueueBuilder.nonDurable(employeeQueue).withArgument("x-dead-letter-exchange", deadLetterExchange)
-                .withArgument("x-dead-letter-routing-key", deadLetterRK).build();
+//        return QueueBuilder.nonDurable(employeeQueue).withArgument("x-dead-letter-exchange", deadLetterExchange)
+//                .withArgument("x-dead-letter-routing-key", deadLetterRK).build();
+        return QueueBuilder.nonDurable(employeeQueue).withArgument("x-dead-letter-exchange", deadLetterExchange).build();
     }
 
     @Bean
@@ -59,8 +60,9 @@ public class RabbitMQConfiguration {
 //        args.put("x-dead-letter-routing-key", deadLetterRK);
 //        return new Queue(vehicleQueue, false, false, false, args);
 
-        return QueueBuilder.nonDurable(vehicleQueue).withArgument("x-dead-letter-exchange", deadLetterExchange)
-                .withArgument("x-dead-letter-routing-key", deadLetterRK).build();
+//        return QueueBuilder.nonDurable(vehicleQueue).withArgument("x-dead-letter-exchange", deadLetterExchange)
+//                .withArgument("x-dead-letter-routing-key", deadLetterRK).build();
+        return QueueBuilder.nonDurable(vehicleQueue).withArgument("x-dead-letter-exchange", deadLetterExchange).build();
     }
 
     @Bean  // done
@@ -69,13 +71,13 @@ public class RabbitMQConfiguration {
     }
 
     @Bean // done
-    DirectExchange deadLetterExchange() {
-        return new DirectExchange(deadLetterExchange);
+    FanoutExchange deadLetterExchange() {
+        return new FanoutExchange(deadLetterExchange);
     }
 
     @Bean
     Binding DLQbinding() {
-        return BindingBuilder.bind(dlq()).to(deadLetterExchange()).with(deadLetterRK);
+        return BindingBuilder.bind(dlq()).to(deadLetterExchange());
     }
 
     @Bean

@@ -34,4 +34,15 @@ public class RabbitMqEventHandler {
 //            log.error("Error at Vehicle handle: " + e);
 //        }
     }
+
+    @RabbitListener(queues = "${rabbitmq.deadLetter.queue}")
+    public void processFailedMessages(Employee employee) {
+        log.info("Received failed message: {}", employee);
+    }
+
+    @RabbitListener(queues = "${rabbitmq.deadLetter.queue}")
+    public void processFailedMessages(Vehicle vehicle) {
+        log.info("Received failed message: {}", vehicle);
+    }
+
 }

@@ -20,4 +20,9 @@ public class Vehicle {
     public void setVehicleType(String vehicleType) {
         this.vehicleType = vehicleType;
     }
+
+    @Override
+    public String toString() {
+        return "[ Vehicle Id: " + this.vehicleId + " ," + " Vehicle Type: " + this.vehicleType + " ]";
+    }
 }
